@@ -1,12 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:http/http.dart' as http;
 import 'package:star_mesas_app/app/config/conexiones.dart';
 import 'package:star_mesas_app/app/config/consultasHttp/consultasHttp.dart';
 import 'package:star_mesas_app/app/config/database/database.dart';
 import 'package:star_mesas_app/app/config/preferences/datosVarios.dart';
 import 'package:star_mesas_app/app/config/provider/conexionProvider.dart';
-import 'package:star_mesas_app/app/config/provider/providerDatosPos.dart';
 
 class ConfiguracionInicial {
   Future<bool> validarConexionNube() async {
@@ -70,80 +68,9 @@ class ConfiguracionInicial {
       return;
     }
   }
-
-  Future<Map<String, dynamic>> buscarCodigosPos() async {
-    if (_conexion == null) {
-      final resultado = {
-        'ok': false,
-        'message': 'No hay conexión activa a la base de datos.',
-      };
-      return resultado;
-    }
-
-    try {
-      final sql = "SELECT codigo FROM star_cajeros";
-      final result = await _conexion.execute(sql);
-
-      if (result.rows.isNotEmpty) {
-        final row = result.rows;
-        final resultado = {'ok': true, 'message': 'Todo Correcto', 'data': row};
-        return resultado;
-      } else {
-        final resultado = {
-          'ok': false,
-          'message': 'No se encontraron cajeros POS',
-        };
-        return resultado;
-      }
-    } catch (e) {
-      final resultado = {'ok': false, 'message': e.toString()};
-      return resultado;
-    }
-  }
-
-  Future<Map<String, dynamic>> buscarCodeEmp() async {
-    if (_conexion == null) {
-      final resultado = {
-        'ok': false,
-        'message': 'No hay conexión activa a la base de datos.',
-      };
-      return resultado;
-    }
-
-    try {
-      final sql = "SELECT code_emp FROM parametros";
-      final result = await _conexion.execute(sql);
-
-      if (result.rows.isNotEmpty) {
-        final row = result.rows;
-        final resultado = {
-          'ok': true,
-          'message': 'Todo Correcto',
-          'data': row,
-          'codeEmp': row,
-        };
-        return resultado;
-      } else {
-        final resultado = {
-          'ok': false,
-          'message': 'No se encontró la configuración del POS',
-        };
-        return resultado;
-      }
-    } catch (e) {
-      final resultado = {'ok': false, 'message': e.toString()};
-      return resultado;
-    }
-  }
 }
 
-final configuracionInicialProvider = ChangeNotifierProvider<ProviderDatosPos>((
-  ref,
-) {
-  return ConfiguracionInicial();
-});
-
-final confiRestProvider = FutureProvider<void>((ref) async {
+final configuracionInicialProvider = FutureProvider<void>((ref) async {
   final config = ConfiguracionInicial();
   bool tieneConexion = await config.validarConexionNube();
 
@@ -151,3 +78,5 @@ final confiRestProvider = FutureProvider<void>((ref) async {
     await config.traerConfiguracion();
   }
 });
+
+final confiRestProvider = configuracionInicialProvider;

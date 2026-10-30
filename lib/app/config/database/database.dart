@@ -1,6 +1,5 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:pointycastle/export.dart';
 
 class LocalDbService {
   static final LocalDbService instance = LocalDbService._init();
@@ -83,18 +82,12 @@ class LocalDbService {
 
   Future<List<Map<String, dynamic>>> obtenerTodosServicios() async {
     final db = await database;
-    final maps = await db.query('servicios');
-
-    final List<Map<String, dynamic>> resultado = [];
-    for (final map in maps) {
-      final row = Map<String, dynamic>.from(map);
-      final encryptedPass = row['pass'] as String;
-      final decryptedPass = await SecureKeyProvider.decryptData(encryptedPass);
-
-      row['pass'] = decryptedPass;
-      resultado.add(row);
+    try {
+      final maps = await db.query('configSystem');
+      return maps;
+    } catch (_) {
+      return [];
     }
-    return resultado;
   }
 
   // --- LIMPIEZA DE DATOS (SESIÓN EXPIRADA O LOGOUT) ---
