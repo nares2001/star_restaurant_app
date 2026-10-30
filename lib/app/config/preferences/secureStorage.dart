@@ -7,9 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// A wrapper around [FlutterSecureStorage] that serializes all operations
 /// sequentially and provides auto-recovery if DPAPI decryption fails on Windows.
 class SafeSecureStorage {
-  final _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
+  final _storage = const FlutterSecureStorage();
   static Future<void>? _pending;
 
   Future<T> _runSequential<T>(Future<T> Function() op) async {
