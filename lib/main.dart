@@ -4,10 +4,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:star_mesas_app/app/app.dart';
+import 'package:star_mesas_app/app/config/preferences/datosConexionBd.dart';
+import 'package:star_mesas_app/app/config/preferences/datosEmpresa.dart';
+import 'package:star_mesas_app/app/config/preferences/datosVarios.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicialización de persistencia local y preferencias
+  await DatosEmpresa.init();
+  await DatosVarios.init();
+  await DatosConexionBd.init();
 
   if (!kIsWeb && (Platform.isWindows)) {
     await windowManager.ensureInitialized();

@@ -46,6 +46,10 @@ class ProviderDatosPos extends ChangeNotifier {
   String serialImpre = '';
   String puertoImpre = '';
   String codigoSerialPos = '';
+  String get estacion => codigoSerialPos.isNotEmpty
+      ? codigoSerialPos
+      : (DatosConexionBd().codigoPos.isNotEmpty ? DatosConexionBd().codigoPos : '01');
+  set estacion(String val) => codigoSerialPos = val;
 
   String numeroFac = '1';
   String numeroNC = '1';
@@ -125,15 +129,11 @@ class ProviderDatosPos extends ChangeNotifier {
 
       if (result.rows.isNotEmpty) {
         final row = result.rows.first.assoc();
-        // Evitar sobrescribir nrodocreg si ya hay una factura en progreso
-        // para no perder el número de documento temporal actual
-        /*  final cliente = ref.read(servicioCliente).cliente;
-        if (cliente.rif.isEmpty) {
-          _arreglarNroControlFactura(
-            nrodocreg: row['nrodocreg']?.toString() ?? '',
-            numgeneral: row['nrodocumento']?.toString() ?? '',
-          );
-        }*/
+
+        _arreglarNroControlFactura(
+          nrodocreg: row['nrodocreg']?.toString() ?? '',
+          numgeneral: row['nrodocumento']?.toString() ?? '',
+        );
 
         serialImpre = row['serial_imp']?.toString() ?? '';
         puertoImpre = row['puerto_imp']?.toString() ?? '';
